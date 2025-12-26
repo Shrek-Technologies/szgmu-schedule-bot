@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Index, SmallInteger, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base
+from .base import Base
 
 if TYPE_CHECKING:
-    from src.models.speciality import Speciality
+    from .speciality import Speciality
 
 
 class Group(Base):
@@ -14,7 +14,7 @@ class Group(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    speciality_id: Mapped[int] = mapped_column(ForeignKey("specialties.id", ondelete="CASCADE"))
+    speciality_id: Mapped[int] = mapped_column(ForeignKey("specialities.id", ondelete="CASCADE"))
     course_number: Mapped[int] = mapped_column(SmallInteger)
     stream: Mapped[str | None] = mapped_column(String(10))
     name: Mapped[str] = mapped_column(String(20))

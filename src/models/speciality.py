@@ -3,15 +3,15 @@ from typing import TYPE_CHECKING
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base
-from src.models.enums import EducationLevel
+from .base import Base
+from .enums import EducationLevel
 
 if TYPE_CHECKING:
-    from src.models.student_group import Group
+    from .student_group import Group
 
 
 class Speciality(Base):
-    __tablename__ = "specialties"
+    __tablename__ = "specialities"
 
     id: Mapped[int] = mapped_column(primary_key=True)
 

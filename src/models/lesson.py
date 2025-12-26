@@ -3,8 +3,8 @@ import datetime
 from sqlalchemy import BigInteger, ForeignKey, Index, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.models.base import Base
-from src.models.enums import LessonType
+from .base import Base
+from .enums import LessonType
 
 
 class Lesson(Base):
@@ -25,7 +25,7 @@ class Lesson(Base):
 
     teacher: Mapped[str | None] = mapped_column(String(255))
     address: Mapped[str | None] = mapped_column(String(255))
-    room: Mapped[str | None] = mapped_column(String(50))
+    room: Mapped[str | None] = mapped_column(String(100))
 
     __table_args__ = (
         Index("idx_lessons_lookup", "subgroup_id", "date"),

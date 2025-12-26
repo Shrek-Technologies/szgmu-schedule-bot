@@ -3,8 +3,8 @@ from datetime import time
 from sqlalchemy import BigInteger, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base
-from src.models.student_group import Subgroup
+from .base import Base
+from .student_group import Subgroup
 
 
 class User(Base):
