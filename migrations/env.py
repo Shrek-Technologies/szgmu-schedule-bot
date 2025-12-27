@@ -10,7 +10,8 @@ from alembic import context
 
 from src.models.base import Base
 from src.models.user import User
-from src.models.student_group import Group, Subgroup
+from src.models.group import Group
+from src.models.subgroup import Subgroup
 from src.models.speciality import Speciality
 from src.models.lesson import Lesson
 

@@ -4,7 +4,7 @@ from sqlalchemy import BigInteger, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .student_group import Subgroup
+from .subgroup import Subgroup
 
 
 class User(Base):

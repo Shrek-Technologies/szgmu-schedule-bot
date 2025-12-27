@@ -7,6 +7,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .speciality import Speciality
+    from .subgroup import Subgroup
 
 
 class Group(Base):
@@ -16,7 +17,7 @@ class Group(Base):
 
     speciality_id: Mapped[int] = mapped_column(ForeignKey("specialities.id", ondelete="CASCADE"))
     course_number: Mapped[int] = mapped_column(SmallInteger)
-    stream: Mapped[str | None] = mapped_column(String(10))
+    stream: Mapped[str] = mapped_column(String(10))
     name: Mapped[str] = mapped_column(String(20))
 
     speciality: Mapped["Speciality"] = relationship(back_populates="groups")
@@ -31,16 +32,3 @@ class Group(Base):
             "speciality_id", "course_number", "stream", "name", name="uq_groups_identity"
         ),
     )
-
-
-class Subgroup(Base):
-    __tablename__ = "subgroups"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-
-    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id", ondelete="CASCADE"))
-    name: Mapped[str] = mapped_column(String(20))
-
-    group: Mapped["Group"] = relationship(back_populates="subgroups")
-
-    __table_args__ = (UniqueConstraint("group_id", "name", name="uq_subgroups_group_name"),)

@@ -7,7 +7,7 @@ from .base import Base
 from .enums import EducationLevel
 
 if TYPE_CHECKING:
-    from .student_group import Group
+    from .group import Group
 
 
 class Speciality(Base):
