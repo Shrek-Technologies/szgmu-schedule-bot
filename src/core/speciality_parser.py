@@ -30,7 +30,7 @@ def extract_education_level(full_name: str) -> EducationLevel:
         return EducationLevel.BACHELOR
 
 
-def parse_speciality_name(full_name: str) -> ParsedSpeciality:
+def parse_speciality(full_name: str) -> ParsedSpeciality:
     """
     Parse speciality full name into code, clean name and education level.
 
