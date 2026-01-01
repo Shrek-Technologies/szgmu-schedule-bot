@@ -23,6 +23,7 @@ class BotSettings(ConfigBase):
     model_config = SettingsConfigDict(env_prefix="BOT_")
 
     token: SecretStr = Field(..., description="Telegram Bot Token")
+    admin_ids: list[int] = Field(default_factory=list, description="List of admin Telegram IDs")
     use_redis: bool = Field(default=False, description="Use RedisStorage vs MemoryStorage")
 
 
