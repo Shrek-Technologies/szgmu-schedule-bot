@@ -14,7 +14,6 @@ async def on_sync_all(
     _manager: DialogManager,
     sync_service: FromDishka[SyncService],
 ) -> None:
-    """Synchronize all schedules."""
     await callback.bot.send_message(
         callback.from_user.id,
         "⏳ Начинается синхронизация расписаний...",
@@ -31,18 +30,3 @@ async def on_sync_all(
             callback.from_user.id,
             f"❌ Ошибка при синхронизации: {str(e)}",
         )
-
-
-async def on_admin_cancel(
-    callback: CallbackQuery,
-    _widget: Button,
-    manager: DialogManager,
-) -> None:
-    """Cancel admin menu and return to main menu."""
-    from bot.dialogs.main_menu.states import MainMenuSG
-
-    telegram_id = callback.from_user.id
-    await manager.start(
-        MainMenuSG.menu,
-        data={"telegram_id": telegram_id},
-    )

@@ -44,7 +44,6 @@ def _format_date_title(d: date, mode: str) -> str:
             weekday = ("пн", "вт", "ср", "чт", "пт", "сб", "вс")[d.weekday()]
             return f"📅 <b>Расписание на {d.strftime('%d.%m')}</b> ({weekday})"
     else:
-        # Безопасное вычисление конца недели
         week_end = d + timedelta(days=6)
         return (
             f"📅 <b>Расписание на неделю</b> ({d.strftime('%d.%m')} — {week_end.strftime('%d.%m')})"

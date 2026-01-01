@@ -1,8 +1,10 @@
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Button, Group
+from aiogram_dialog.widgets.kbd import Group, Start
 from aiogram_dialog.widgets.text import Const
 
-from .callbacks import on_skip_onboarding, on_start_group_selection
+from bot.dialogs.group_selection.states import GroupSelectionSG
+from bot.dialogs.main_menu.states import MainMenuSG
+
 from .states import OnboardingSG
 
 dialog = Dialog(
@@ -13,15 +15,15 @@ dialog = Dialog(
             "Начнем с выбора группы?"
         ),
         Group(
-            Button(
+            Start(
                 Const("📚 Выбрать группу"),
                 id="start_group",
-                on_click=on_start_group_selection,
+                state=GroupSelectionSG.speciality,
             ),
-            Button(
+            Start(
                 Const("↩️ Позже"),
                 id="skip",
-                on_click=on_skip_onboarding,
+                state=MainMenuSG.menu,
             ),
             width=1,
         ),

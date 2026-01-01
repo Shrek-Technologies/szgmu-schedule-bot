@@ -43,18 +43,3 @@ async def on_next(
     new_anchor = anchor + delta
 
     manager.dialog_data["anchor_date"] = new_anchor.isoformat()
-
-
-async def on_schedule_cancel(
-    callback: CallbackQuery,
-    _widget: Button,
-    manager: DialogManager,
-) -> None:
-    """Cancel schedule dialog and return to main menu."""
-    from bot.dialogs.main_menu.states import MainMenuSG
-
-    telegram_id = callback.from_user.id
-    await manager.start(
-        MainMenuSG.menu,
-        data={"telegram_id": telegram_id},
-    )
