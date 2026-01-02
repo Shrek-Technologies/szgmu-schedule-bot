@@ -20,6 +20,8 @@ async def start_command(
     dialog_manager: DialogManager,
     user_service: FromDishka[UserService],
 ) -> None:
+    if not message.from_user:
+        return
     user = await user_service.get_or_create_user(
         telegram_id=message.from_user.id,
         username=message.from_user.username,

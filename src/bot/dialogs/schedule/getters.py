@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from typing import Any
 
 from aiogram_dialog import DialogManager
 from dishka import FromDishka
@@ -56,7 +57,7 @@ async def get_schedule(
     user_service: FromDishka[UserService],
     schedule_service: FromDishka[ScheduleService],
     **_: object,
-) -> dict:
+) -> dict[str, Any]:
     user_id = dialog_manager.middleware_data["event_from_user"].id
     user = await user_service.get_by_telegram_id(user_id)
     if not user or not user.subgroup_id:

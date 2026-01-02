@@ -9,7 +9,7 @@ from services.user_service import UserService
 
 async def on_speciality_selected(
     _callback: CallbackQuery,
-    _widget: Select,
+    _widget: Select[str],
     manager: DialogManager,
     item_id: str,
 ) -> None:
@@ -19,7 +19,7 @@ async def on_speciality_selected(
 
 async def on_course_selected(
     _callback: CallbackQuery,
-    _widget: Select,
+    _widget: Select[str],
     manager: DialogManager,
     item_id: str,
 ) -> None:
@@ -29,7 +29,7 @@ async def on_course_selected(
 
 async def on_stream_selected(
     _callback: CallbackQuery,
-    _widget: Select,
+    _widget: Select[str],
     manager: DialogManager,
     item_id: str,
 ) -> None:
@@ -39,7 +39,7 @@ async def on_stream_selected(
 
 async def on_group_selected(
     _callback: CallbackQuery,
-    _widget: Select,
+    _widget: Select[str],
     manager: DialogManager,
     item_id: str,
 ) -> None:
@@ -50,7 +50,7 @@ async def on_group_selected(
 @inject
 async def on_subgroup_selected(
     callback: CallbackQuery,
-    _widget: Select,
+    _widget: Select[str],
     manager: DialogManager,
     item_id: str,
     user_service: FromDishka[UserService],

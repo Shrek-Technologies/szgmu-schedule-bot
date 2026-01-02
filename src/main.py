@@ -3,9 +3,10 @@ import logging
 import sys
 
 from aiogram import Bot, Dispatcher
-from aiogram.client.bot import DefaultBotProperties
+from aiogram.client.default import DefaultBotProperties
+from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram_dialog import setup_dialogs
 from dishka.integrations.aiogram import setup_dishka
 

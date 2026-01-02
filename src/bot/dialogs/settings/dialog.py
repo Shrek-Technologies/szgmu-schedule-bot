@@ -13,7 +13,7 @@ dialog = Dialog(
             Const("🔔 Включить уведомления"),
             Const("🔕 Отключить уведомления"),
             id="notifications",
-            on_state_changed=on_toggle_notifications,
+            on_click=on_toggle_notifications,  # type: ignore[arg-type]
         ),
         Cancel(Const("← Назад")),
         state=SettingsSG.view,

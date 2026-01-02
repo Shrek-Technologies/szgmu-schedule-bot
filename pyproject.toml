@@ -26,6 +26,7 @@ dev = [
     "pre-commit>=4.5.1",
 ]
 lint = [
+    "mypy>=1.19.1",
     "ruff>=0.14.10",
 ]
 
@@ -42,7 +43,7 @@ select = [
     "ALL"
 ]
 ignore = [
-    "ANN002", "ANN003", "ANN204", "ANN401",
+    "ANN",
     "BLE001",
     "COM812",
     "D",
@@ -73,3 +74,23 @@ no-lines-before = ["local-folder"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "parents"
+
+[tool.mypy]
+mypy_path = ["src"]
+packages = ["api", "bot", "core", "di", "models", "repositories", "services"]
+plugins = ["pydantic.mypy"]
+explicit_package_bases = true
+strict = true
+strict_bytes = true
+local_partial_types = true
+no_implicit_optional = true
+warn_unused_ignores = true
+show_error_codes = true
+exclude = ['venv', '.venv']
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = ["func-returns-value"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

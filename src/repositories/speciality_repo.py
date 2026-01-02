@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from models.speciality import EducationLevel, Speciality
+from models import EducationLevel, Speciality
 from repositories.base import BaseRepository
 
 

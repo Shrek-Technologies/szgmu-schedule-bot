@@ -26,7 +26,9 @@ class UserService:
         self.session = session
         self.user_repo = user_repo
 
-    async def get_or_create_user(self, telegram_id: int, username: str, full_name: str) -> User:
+    async def get_or_create_user(
+        self, telegram_id: int, username: str | None, full_name: str
+    ) -> User:
         """Get existing user or create new one.
 
         Args:

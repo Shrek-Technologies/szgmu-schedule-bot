@@ -1,8 +1,10 @@
 import logging
+from collections.abc import Sequence
 from datetime import time
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.user import User
 from repositories.user_repo import UserRepository
 
 logger = logging.getLogger(__name__)
@@ -55,7 +57,7 @@ class SettingsService:
         logger.info("User %d notification time set to %s", telegram_id, notification_time)
         return is_updated
 
-    async def get_users_for_notification_batch(self, target_time: time) -> list:
+    async def get_users_for_notification_batch(self, target_time: time) -> Sequence[User]:
         """Get all subscribed users with a specific notification time.
 
         Args:

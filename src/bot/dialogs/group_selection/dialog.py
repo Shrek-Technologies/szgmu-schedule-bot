@@ -82,7 +82,7 @@ dialog = Dialog(
                 id="subgroup_select",
                 items="items",
                 item_id_getter=lambda x: str(x[0]),
-                on_click=on_subgroup_selected,
+                on_click=on_subgroup_selected,  # type: ignore[arg-type]
             ),
         ),
         Back(Const("← Назад")),

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any
+from typing import Any, Self
 from urllib.parse import urljoin
 
 import aiohttp
@@ -27,14 +27,14 @@ class BaseAPIClient:
         self.retry_delay = retry_delay
         self._session: aiohttp.ClientSession | None = None
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self._ensure_session()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):  # noqa: ANN001
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:  # type: ignore[no-untyped-def]
         await self.close()
 
-    async def _ensure_session(self) -> None:
+    async def _ensure_session(self) -> aiohttp.ClientSession:
         """Ensure session is created."""
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession(
@@ -44,6 +44,7 @@ class BaseAPIClient:
                     "Content-Type": "application/json",
                 },
             )
+        return self._session
 
     async def close(self) -> None:
         """Close the session."""
@@ -59,7 +60,7 @@ class BaseAPIClient:
         method: str,
         endpoint: str,
         **kwargs: Any,
-    ) -> dict[str, Any] | list[dict[str, Any]]:
+    ) -> Any:
         """Make HTTP request with retry logic."""
         last_exception: Exception | None = None
 
@@ -101,12 +102,12 @@ class BaseAPIClient:
         method: str,
         endpoint: str,
         **kwargs: Any,
-    ) -> dict[str, Any] | list[dict[str, Any]]:
+    ) -> Any:
         """Make single HTTP request."""
-        await self._ensure_session()
+        session = await self._ensure_session()
         url = self._build_url(endpoint)
         try:
-            async with self._session.request(method, url, **kwargs) as response:
+            async with session.request(method, url, **kwargs) as response:
                 response.raise_for_status()
 
                 no_content = 204
@@ -144,7 +145,7 @@ class BaseAPIClient:
         method: str,
         endpoint: str,
         **kwargs: Any,
-    ) -> dict[str, Any] | list[dict[str, Any]]:
+    ) -> Any:
         """Make HTTP request with retry logic."""
         return await self._request_with_retry(method, endpoint, **kwargs)
 
@@ -153,7 +154,7 @@ class BaseAPIClient:
         endpoint: str,
         params: dict[str, Any] | None = None,
         **kwargs: Any,
-    ) -> dict[str, Any] | list[dict[str, Any]]:
+    ) -> Any:
         """Make GET request."""
         return await self._request("GET", endpoint, params=params, **kwargs)
 
@@ -163,6 +164,6 @@ class BaseAPIClient:
         data: dict[str, Any] | None = None,
         json: dict[str, Any] | None = None,
         **kwargs: Any,
-    ) -> dict[str, Any] | list[dict[str, Any]]:
+    ) -> Any:
         """Make POST request."""
         return await self._request("POST", endpoint, data=data, json=json, **kwargs)

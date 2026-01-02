@@ -11,7 +11,7 @@ from core.academic_calendar import (
 )
 from core.lesson_type_mapper import parse_lesson_type
 from core.speciality_parser import parse_speciality
-from models.lesson import LessonType
+from models import EducationLevel, LessonType
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class ParsedGroupSchedule(NamedTuple):
     speciality_code: str
     speciality_full_name: str
     speciality_clean_name: str
-    speciality_level: object | None
+    speciality_level: EducationLevel | None
     course_number: int
     stream: str
     group_name: str
