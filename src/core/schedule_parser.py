@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Dict, NamedTuple, Tuple
+from typing import NamedTuple
 
 from api.schemas.responses import ScheduleLesson, XlsxScheduleDetail
 from core.academic_calendar import (
@@ -11,7 +11,7 @@ from core.academic_calendar import (
 )
 from core.lesson_type_mapper import parse_lesson_type
 from core.speciality_parser import parse_speciality
-from models.lesson import LessonType
+from models import EducationLevel, LessonType
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class ParsedGroupSchedule(NamedTuple):
     speciality_code: str
     speciality_full_name: str
     speciality_clean_name: str
-    speciality_level: object | None
+    speciality_level: EducationLevel | None
     course_number: int
     stream: str
     group_name: str
@@ -65,7 +65,7 @@ class ScheduleParser:
         semester_start = calculate_semester_start_date(year_start, year_end, header.semester_type)
 
         # Group lessons by normalized key: use parsed speciality code and normalized strings
-        groups_map: Dict[Tuple[str, int, str, str, str], list[ScheduleLesson]] = {}
+        groups_map: dict[tuple[str, int, str, str, str], list[ScheduleLesson]] = {}
         for lesson_dto in schedule_detail.schedule_lesson_dto_list:
             try:
                 course_number = int(lesson_dto.course_number)
@@ -117,7 +117,7 @@ class ScheduleParser:
         parsed_spec = parse_speciality(speciality)
 
         # Build lessons dict to deduplicate by (date, start_time, subject)
-        lessons_map: Dict[Tuple[datetime.date, datetime.time, str], ParsedLesson] = {}
+        lessons_map: dict[tuple[datetime.date, datetime.time, str], ParsedLesson] = {}
 
         for lesson_dto in lesson_dtos:
             try:

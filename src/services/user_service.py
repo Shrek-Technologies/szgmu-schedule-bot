@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.user import User
 from repositories.user_repo import UserRepository
-
 from .exceptions import UserNotFoundError
 
 logger = logging.getLogger(__name__)
@@ -17,7 +16,7 @@ class UserService:
         self,
         session: AsyncSession,
         user_repo: UserRepository,
-    ):
+    ) -> None:
         """Initialize UserService with repositories.
 
         Args:
@@ -27,7 +26,9 @@ class UserService:
         self.session = session
         self.user_repo = user_repo
 
-    async def get_or_create_user(self, telegram_id: int, username: str, full_name: str) -> User:
+    async def get_or_create_user(
+        self, telegram_id: int, username: str | None, full_name: str
+    ) -> User:
         """Get existing user or create new one.
 
         Args:
@@ -38,20 +39,13 @@ class UserService:
         Returns:
             User instance
         """
-        try:
-            user = await self.user_repo.upsert(
-                telegram_id=telegram_id,
-                username=username,
-                full_name=full_name,
-            )
-            await self.session.commit()
-            logger.info(f"User {telegram_id} created or updated")
-            return user
-
-        except Exception as e:
-            await self.session.rollback()
-            logger.error(f"Error creating/updating user {telegram_id}: {str(e)}")
-            raise UserNotFoundError(f"Failed to create/update user: {str(e)}") from e
+        user = await self.user_repo.upsert(
+            telegram_id=telegram_id,
+            username=username,
+            full_name=full_name,
+        )
+        await self.session.commit()
+        return user
 
     async def get_by_telegram_id(self, telegram_id: int) -> User | None:
         """Get user by Telegram ID.
@@ -80,10 +74,9 @@ class UserService:
         try:
             is_updated = await self.user_repo.update_subgroup(telegram_id, subgroup_id)
             await self.session.commit()
-            logger.info(f"User {telegram_id} assigned to subgroup {subgroup_id}")
-            return is_updated
-
         except Exception as e:
             await self.session.rollback()
-            logger.error(f"Error setting subgroup for user {telegram_id}: {str(e)}")
-            raise UserNotFoundError(f"Failed to set subgroup: {str(e)}") from e
+            logger.error("Error setting subgroup for user %d: %s", telegram_id, e)
+            raise UserNotFoundError(f"Failed to set subgroup: {e!s}") from e
+        logger.info("User %d assigned to subgroup %d", telegram_id, subgroup_id)
+        return is_updated

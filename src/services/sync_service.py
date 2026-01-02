@@ -3,12 +3,11 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.client import ScheduleAPIClient
-from core.schedule_parser import ParsedGroupSchedule, ScheduleParser
+from core.schedule_parser import ParsedGroupSchedule, ParsedSchedule, ScheduleParser
 from repositories.group_repo import GroupRepository
 from repositories.lesson_repo import LessonRepository
 from repositories.speciality_repo import SpecialityRepository
 from repositories.subgroup_repo import SubgroupRepository
-
 from .exceptions import SyncError
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ class SyncService:
         group_repo: GroupRepository,
         subgroup_repo: SubgroupRepository,
         lesson_repo: LessonRepository,
-    ):
+    ) -> None:
         """Initialize SyncService.
 
         Args:
@@ -52,25 +51,19 @@ class SyncService:
         Raises:
             SyncError: If synchronization fails
         """
+        schedule_detail = await self.api_client.get_schedule_details(schedule_id)
+        if schedule_detail is None:
+            raise SyncError("Failed to fetch schedule %d", schedule_id)
+
         try:
-            schedule_detail = await self.api_client.get_schedule_details(schedule_id)
-
-            if schedule_detail is None:
-                raise SyncError(f"Failed to fetch schedule {schedule_id}")
-
-            # Parse schedule data
             parsed = ScheduleParser.parse(schedule_detail)
-
-            # Persist to database
             await self._persist_schedule(parsed)
             await self.session.commit()
-            logger.info(f"Successfully synced schedule {schedule_id}")
+            logger.info("Successfully synced schedule %d", schedule_id)
 
         except Exception as e:
             await self.session.rollback()
-            if isinstance(e, SyncError):
-                raise
-            raise SyncError(f"Error syncing schedule {schedule_id}: {str(e)}") from e
+            raise SyncError(f"Error syncing schedule {schedule_id}: {e!s}") from e
 
     async def sync_all_schedules(self) -> None:
         """Synchronize all available schedules.
@@ -79,27 +72,27 @@ class SyncService:
         """
         try:
             summaries = await self.api_client.get_all_schedules()
-            logger.info(f"Found {len(summaries)} schedules to sync")
+            logger.info("Found %d schedules to sync", len(summaries))
 
             failed_schedules = []
 
             for summary in summaries:
                 try:
                     await self.sync_single_schedule(summary.id)
-                except Exception as e:
+                except SyncError as e:
                     failed_schedules.append((summary.id, str(e)))
-                    logger.error(f"Error syncing schedule {summary.id}: {str(e)}")
+                    logger.error("Error syncing schedule %d: %s", summary.id, e)
 
-            logger.info(f"Sync completed. Failed schedules: {len(failed_schedules)}")
+            logger.info("Sync completed. Failed schedules: %d", len(failed_schedules))
 
             if failed_schedules:
                 for schedule_id, error in failed_schedules:
-                    logger.error(f"  - Schedule {schedule_id}: {error}")
+                    logger.error("  - Schedule %d: %s", schedule_id, error)
 
         except Exception as e:
-            raise SyncError(f"Error during sync_all_schedules: {str(e)}") from e
+            raise SyncError(f"Error during sync_all_schedules: {e!s}") from e
 
-    async def _persist_schedule(self, parsed) -> None:
+    async def _persist_schedule(self, parsed: ParsedSchedule) -> None:
         """Persist parsed schedule to database.
 
         Args:
@@ -114,7 +107,6 @@ class SyncService:
         Args:
             group: ParsedGroupSchedule
         """
-        # Upsert speciality
         speciality = await self.speciality_repo.upsert(
             code=group.speciality_code,
             full_name=group.speciality_full_name,
@@ -122,7 +114,6 @@ class SyncService:
             level=group.speciality_level,
         )
 
-        # Upsert group
         group_entity = await self.group_repo.upsert(
             speciality_id=speciality.id,
             course_number=group.course_number,
@@ -130,7 +121,6 @@ class SyncService:
             name=group.group_name,
         )
 
-        # Upsert subgroup
         subgroup = await self.subgroup_repo.upsert(
             group_id=group_entity.id,
             name=group.subgroup_name,
@@ -152,6 +142,5 @@ class SyncService:
             for lesson in group.lessons
         ]
 
-        # Bulk upsert lessons (DB handles duplicates via unique constraint)
         if lessons_data:
             await self.lesson_repo.bulk_upsert(lessons_data)

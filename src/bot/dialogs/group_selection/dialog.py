@@ -3,7 +3,6 @@ from aiogram_dialog.widgets.kbd import Back, Cancel, Column, Select, Start
 from aiogram_dialog.widgets.text import Const, Format
 
 from bot.dialogs.main_menu.states import MainMenuSG
-
 from .callbacks import (
     on_course_selected,
     on_group_selected,
@@ -83,7 +82,7 @@ dialog = Dialog(
                 id="subgroup_select",
                 items="items",
                 item_id_getter=lambda x: str(x[0]),
-                on_click=on_subgroup_selected,
+                on_click=on_subgroup_selected,  # type: ignore[arg-type]
             ),
         ),
         Back(Const("← Назад")),

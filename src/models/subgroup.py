@@ -17,6 +17,6 @@ class Subgroup(Base):
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id", ondelete="CASCADE"))
     name: Mapped[str] = mapped_column(String(20))
 
-    group: Mapped["Group"] = relationship(back_populates="subgroups")
+    group: Mapped[Group] = relationship(back_populates="subgroups")
 
     __table_args__ = (UniqueConstraint("group_id", "name", name="uq_subgroups_group_name"),)

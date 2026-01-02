@@ -26,28 +26,71 @@ dev = [
     "pre-commit>=4.5.1",
 ]
 lint = [
+    "mypy>=1.19.1",
     "ruff>=0.14.10",
 ]
 
 [tool.ruff]
 line-length = 100
-target-version = "py314"
-exclude = [
-    ".git",
-    ".mypy_cache",
-    ".ruff_cache",
-    "__pypackages__",
-    "__pycache__",
-    "venv",
-    ".venv",
-    "migrations",
+
+include = [
+    "src/**.py",
+    "tests/**.py",
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "B", "Q", "I", "N", "S", "T20", "DJ", "ARG", "PTH"]
+select = [
+    "ALL"
+]
+ignore = [
+    "ANN",
+    "BLE001",
+    "COM812",
+    "D",
+    "DTZ011",
+    "EM101","EM102",
+    "FBT001", "FBT002",
+    "PLR0913",
+    "PT001", "PT023",
+    "RET505",
+    "SIM108",
+    "RUF001",
+    "TRY003", "TRY400",
+    "TC001", "TC002", "TC003", "TC006",
+]
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "TID252",
+    "PLR2004",
+    "S101",
+    "TRY003",
+    "PLW1641",
+    "PYI059"
+]
+
+[tool.ruff.lint.isort]
+no-lines-before = ["local-folder"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[tool.mypy]
+mypy_path = ["src"]
+packages = ["api", "bot", "core", "di", "models", "repositories", "services"]
+plugins = ["pydantic.mypy"]
+explicit_package_bases = true
+strict = true
+strict_bytes = true
+local_partial_types = true
+no_implicit_optional = true
+warn_unused_ignores = true
+show_error_codes = true
+exclude = ['venv', '.venv']
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = ["func-returns-value"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

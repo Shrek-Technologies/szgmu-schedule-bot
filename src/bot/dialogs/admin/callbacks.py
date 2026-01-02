@@ -5,28 +5,23 @@ from dishka import FromDishka
 from dishka.integrations.aiogram_dialog import inject
 
 from services.sync_service import SyncService
+from .states import AdminSG
 
 
 @inject
 async def on_sync_all(
-    callback: CallbackQuery,
+    _callback: CallbackQuery,
     _widget: Button,
-    _manager: DialogManager,
+    manager: DialogManager,
     sync_service: FromDishka[SyncService],
 ) -> None:
-    await callback.bot.send_message(
-        callback.from_user.id,
-        "⏳ Начинается синхронизация расписаний...",
-    )
+    await manager.switch_to(AdminSG.syncing)
+    await manager.show()
 
     try:
         await sync_service.sync_all_schedules()
-        await callback.bot.send_message(
-            callback.from_user.id,
-            "✅ Синхронизация завершена успешно",
-        )
+        await manager.switch_to(AdminSG.done)
+
     except Exception as e:
-        await callback.bot.send_message(
-            callback.from_user.id,
-            f"❌ Ошибка при синхронизации: {str(e)}",
-        )
+        manager.dialog_data["error"] = str(e)
+        await manager.switch_to(AdminSG.error)

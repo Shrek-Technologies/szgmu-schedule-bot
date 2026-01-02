@@ -73,9 +73,7 @@ def calculate_lesson_date(
     """
     week_offset = week_number - 1
     target_day_index = DAY_NAME_MAP.get(day_name.lower(), WeekDay.MONDAY)
-    exact_date = semester_start + datetime.timedelta(weeks=week_offset, days=target_day_index.value)
-
-    return exact_date
+    return semester_start + datetime.timedelta(weeks=week_offset, days=target_day_index.value)
 
 
 def parse_time_string(time_str: str) -> tuple[datetime.time, datetime.time]:

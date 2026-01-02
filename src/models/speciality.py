@@ -20,6 +20,6 @@ class Speciality(Base):
     clean_name: Mapped[str] = mapped_column(String(256))
     level: Mapped[EducationLevel | None] = mapped_column(nullable=True)
 
-    groups: Mapped[list["Group"]] = relationship(
+    groups: Mapped[list[Group]] = relationship(
         back_populates="speciality", lazy="selectin", cascade="all, delete-orphan"
     )

@@ -86,7 +86,7 @@ class ScheduleAPIClient(BaseAPIClient):
             return XlsxScheduleDetail.model_validate(response)
 
         except Exception as e:
-            logger.error("Unexpected error for schedule %d: %s", schedule_id, str(e))
+            logger.error("Unexpected error for schedule %d: %s", schedule_id, e)
             return None
 
     async def search_schedules(
@@ -138,7 +138,7 @@ class ScheduleAPIClient(BaseAPIClient):
                     break
 
             except Exception as e:
-                logger.error("Error fetching page %d: %s", page, str(e))
+                logger.error("Error fetching page %d: %s", page, e)
                 if page == 0:  # Re-raise if first page fails
                     raise
                 break
@@ -146,7 +146,7 @@ class ScheduleAPIClient(BaseAPIClient):
         logger.info("Search completed, found %d schedules total", len(all_schedules))
         return all_schedules
 
-    async def get_all_schedules(self, max_pages=100) -> list[XlsxScheduleSummary]:
+    async def get_all_schedules(self, max_pages: int = 100) -> list[XlsxScheduleSummary]:
         """
         Get all available schedules (no filters).
 

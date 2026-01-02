@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from datetime import date, time
+from typing import Any
 
 from sqlalchemy import and_, select
 from sqlalchemy.dialects.postgresql import insert
 
-from models.lesson import Lesson, LessonType
+from models import Lesson, LessonType
 from repositories.base import BaseRepository
 
 
@@ -56,20 +57,20 @@ class LessonRepository(BaseRepository):
         await self.session.refresh(lesson)
         return lesson
 
-    async def bulk_upsert(self, lessons_data: Sequence[dict]) -> Sequence[Lesson]:
+    async def bulk_upsert(self, lessons_data: Sequence[dict[str, Any]]) -> Sequence[Lesson]:
         """Bulk upsert lessons."""
         if not lessons_data:
             return []
 
-        stmt = insert(Lesson).values(lessons_data)
-        stmt = stmt.on_conflict_do_update(
+        insert_stmt = insert(Lesson).values(lessons_data)
+        stmt = insert_stmt.on_conflict_do_update(
             constraint="uq_lesson_unique",
             set_={
-                "end_time": stmt.excluded.end_time,
-                "teacher": stmt.excluded.teacher,
-                "lesson_type": stmt.excluded.lesson_type,
-                "address": stmt.excluded.address,
-                "room": stmt.excluded.room,
+                "end_time": insert_stmt.excluded.end_time,
+                "teacher": insert_stmt.excluded.teacher,
+                "lesson_type": insert_stmt.excluded.lesson_type,
+                "address": insert_stmt.excluded.address,
+                "room": insert_stmt.excluded.room,
             },
         ).returning(Lesson)
 

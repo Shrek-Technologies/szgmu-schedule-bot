@@ -1,4 +1,4 @@
-from models.lesson import LessonType
+from models import LessonType
 
 
 def parse_lesson_type(raw: str | None) -> LessonType:

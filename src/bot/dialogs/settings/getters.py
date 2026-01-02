@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiogram_dialog import DialogManager
 from dishka import FromDishka
 from dishka.integrations.aiogram_dialog import inject
@@ -10,7 +12,7 @@ async def get_user_settings(
     dialog_manager: DialogManager,
     user_service: FromDishka[UserService],
     **_: object,
-) -> dict:
+) -> dict[str, Any]:
     telegram_id = dialog_manager.middleware_data["event_from_user"].id
     user = await user_service.get_by_telegram_id(telegram_id)
 

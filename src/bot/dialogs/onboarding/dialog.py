@@ -4,7 +4,6 @@ from aiogram_dialog.widgets.text import Const
 
 from bot.dialogs.group_selection.states import GroupSelectionSG
 from bot.dialogs.main_menu.states import MainMenuSG
-
 from .states import OnboardingSG
 
 dialog = Dialog(

@@ -20,9 +20,9 @@ class Group(Base):
     stream: Mapped[str] = mapped_column(String(10))
     name: Mapped[str] = mapped_column(String(20))
 
-    speciality: Mapped["Speciality"] = relationship(back_populates="groups")
+    speciality: Mapped[Speciality] = relationship(back_populates="groups")
 
-    subgroups: Mapped[list["Subgroup"]] = relationship(
+    subgroups: Mapped[list[Subgroup]] = relationship(
         back_populates="group", lazy="selectin", cascade="all, delete-orphan"
     )
 

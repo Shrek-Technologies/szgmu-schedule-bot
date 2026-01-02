@@ -21,4 +21,4 @@ class User(Base):
     is_subscribed: Mapped[bool] = mapped_column(Boolean, default=False)
     notification_time: Mapped[time] = mapped_column(default=time(7, 0))  # 7:00 AM default
 
-    subgroup: Mapped["Subgroup"] = relationship()
+    subgroup: Mapped[Subgroup] = relationship()

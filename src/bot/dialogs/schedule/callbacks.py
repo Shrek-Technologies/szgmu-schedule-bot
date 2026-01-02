@@ -9,7 +9,7 @@ async def on_mode_changed(
     _event: ChatEvent,
     checkbox: ManagedCheckbox,
     manager: DialogManager,
-):
+) -> None:
     manager.dialog_data["mode"] = "week" if checkbox.is_checked() else "day"
 
 

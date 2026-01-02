@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,7 +26,7 @@ class GroupSelectionService:
         speciality_repo: SpecialityRepository,
         group_repo: GroupRepository,
         subgroup_repo: SubgroupRepository,
-    ):
+    ) -> None:
         """Initialize GroupSelectionService with repositories.
 
         Args:
@@ -39,29 +40,28 @@ class GroupSelectionService:
         self.group_repo = group_repo
         self.subgroup_repo = subgroup_repo
 
-    async def get_all_specialities(self) -> list[Speciality]:
+    async def get_all_specialities(self) -> Sequence[Speciality]:
         """Get all available specialities.
 
         Returns:
-            List of Speciality objects
+            Sequence of Speciality objects
         """
         return await self.speciality_repo.find_all()
 
-    async def get_courses_by_speciality(self, speciality_id: int) -> list[int]:
+    async def get_courses_by_speciality(self, speciality_id: int) -> Sequence[int]:
         """Get all distinct course numbers for a speciality.
 
         Args:
             speciality_id: ID of the speciality
 
         Returns:
-            Sorted list of course numbers
+            Sorted sequence of course numbers
         """
-        courses = await self.group_repo.find_distinct_courses(speciality_id)
-        return courses
+        return await self.group_repo.find_distinct_courses(speciality_id)
 
     async def get_streams_by_speciality_course(
         self, speciality_id: int, course_number: int
-    ) -> list[str]:
+    ) -> Sequence[str]:
         """Get all distinct streams for a speciality and course.
 
         Args:
@@ -69,13 +69,13 @@ class GroupSelectionService:
             course_number: Course number
 
         Returns:
-            List of stream identifiers
+            Sequence of stream identifiers
         """
         return await self.group_repo.find_distinct_streams(speciality_id, course_number)
 
     async def get_groups_by_structure(
         self, speciality_id: int, course_number: int, stream: str
-    ) -> list[Group]:
+    ) -> Sequence[Group]:
         """Get all groups matching the speciality, course, and stream.
 
         Args:
@@ -84,19 +84,19 @@ class GroupSelectionService:
             stream: Stream identifier
 
         Returns:
-            List of Group objects
+            Sequence of Group objects
         """
         return await self.group_repo.find_by_speciality_course_stream(
             speciality_id, course_number, stream
         )
 
-    async def get_subgroups_by_group(self, group_id: int) -> list[Subgroup]:
+    async def get_subgroups_by_group(self, group_id: int) -> Sequence[Subgroup]:
         """Get all subgroups for a group.
 
         Args:
             group_id: ID of the group
 
         Returns:
-            List of Subgroup objects
+            Sequence of Subgroup objects
         """
         return await self.subgroup_repo.find_by_group(group_id)

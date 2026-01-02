@@ -7,7 +7,6 @@ from bot.dialogs.admin.states import AdminSG
 from bot.dialogs.group_selection.states import GroupSelectionSG
 from bot.dialogs.schedule.states import ScheduleSG
 from bot.dialogs.settings.states import SettingsSG
-
 from .getters import get_main_menu_data
 from .states import MainMenuSG
 
