@@ -1,9 +1,11 @@
 from typing import Any
 
+from aiogram.types import User
 from aiogram_dialog import DialogManager
 from dishka import FromDishka
 from dishka.integrations.aiogram_dialog import inject
 
+import models
 from core.config import BotSettings
 from services.user_service import UserService
 
@@ -15,12 +17,12 @@ async def get_main_menu_data(
     settings: FromDishka[BotSettings],
     **_: object,
 ) -> dict[str, Any]:
-    telegram_id = dialog_manager.middleware_data["event_from_user"].id
-    user = await user_service.get_by_telegram_id(telegram_id)
-    if not user or not user.subgroup_id:
-        return {"has_group": False, "is_admin": telegram_id in settings.admin_ids}
+    tg_user: User = dialog_manager.middleware_data["event_from_user"]
+    user: models.User = await user_service.get_or_create_user(
+        tg_user.id, tg_user.username, tg_user.full_name
+    )
 
     return {
-        "has_group": True,
-        "is_admin": telegram_id in settings.admin_ids,
+        "has_group": user.subgroup_id is not None,
+        "is_admin": user.telegram_id in settings.admin_ids,
     }
