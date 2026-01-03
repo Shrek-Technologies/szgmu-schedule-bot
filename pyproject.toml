@@ -17,11 +17,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-lint = [
-    "ruff>=0.14.10",
-]
-
-[dependency-groups]
 dev = [
     "pre-commit>=4.5.1",
 ]
