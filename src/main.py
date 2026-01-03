@@ -7,6 +7,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.types import BotCommand
 from aiogram_dialog import setup_dialogs
 from dishka.integrations.aiogram import setup_dishka
 
@@ -29,6 +30,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+async def setup_bot_commands(bot: Bot) -> None:
+    commands = [
+        BotCommand(command="start", description="📝 Главное меню"),
+        BotCommand(command="help", description="📅 Помощь"),
+    ]
+    await bot.set_my_commands(commands)
+
+
 def create_storage(
     use_redis: bool = False,
     redis_settings: RedisSettings | None = None,
@@ -39,10 +48,10 @@ def create_storage(
             storage = RedisStorage.from_url(
                 redis_settings.dsn, key_builder=DefaultKeyBuilder(with_destiny=True)
             )
+            logger.info("Using Redis storage")
+            return storage
         except (RuntimeError, ConnectionError) as e:
             logger.warning("Redis connection failed, using MemoryStorage: %s", e)
-        logger.info("Using Redis storage")
-        return storage
 
     logger.info("Using MemoryStorage")
     return MemoryStorage()
@@ -64,6 +73,7 @@ async def main() -> None:
 
     dp = Dispatcher(storage=storage)
 
+    setup_bot_commands(bot)
     setup_dishka(container, dp)
     setup_dialogs(dp)
 

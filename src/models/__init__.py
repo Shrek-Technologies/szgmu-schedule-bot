@@ -1,4 +1,4 @@
-from .enums import EducationLevel, LessonType, WeekDayShort
+from .enums import EducationLevel, LessonType
 from .group import Group
 from .lesson import Lesson
 from .speciality import Speciality
@@ -13,5 +13,4 @@ __all__ = [
     "Speciality",
     "Subgroup",
     "User",
-    "WeekDayShort",
 ]

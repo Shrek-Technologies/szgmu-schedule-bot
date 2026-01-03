@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 import aiohttp
 from aiohttp import ClientError, ClientResponseError, ClientTimeout
 
-from api.exceptions import APIError, APINetworkError, APITimeoutError
+from .exceptions import APIError, APINetworkError, APITimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -63,20 +63,21 @@ class BaseAPIClient:
     ) -> Any:
         """Make HTTP request with retry logic."""
         last_exception: Exception | None = None
+        max_attempts = self.max_retries + 1
 
-        for attempt in range(self.max_retries):
+        for attempt in range(max_attempts):
             try:
                 return await self._make_request(method, endpoint, **kwargs)
 
             except (TimeoutError, ClientError) as e:
                 last_exception = e
 
-                if attempt < self.max_retries - 1:
+                if attempt < max_attempts - 1:
                     wait_time = self.retry_delay * (2**attempt)  # Exponential backoff
                     logger.warning(
                         "Request failed (attempt %d/%d), retrying in %.1fs: %s",
                         attempt + 1,
-                        self.max_retries,
+                        max_attempts,
                         wait_time,
                         str(e),
                     )
@@ -84,17 +85,17 @@ class BaseAPIClient:
                 else:
                     logger.error(
                         "Request failed after %d attempts: %s",
-                        self.max_retries,
+                        max_attempts,
                         str(e),
                     )
 
         # If we get here, all retries failed
-        if isinstance(last_exception, asyncio.TimeoutError):
+        if isinstance(last_exception, TimeoutError):
             raise APITimeoutError(
-                f"Request timeout after {self.max_retries} attempts"
+                f"Request timeout after {max_attempts} attempts"
             ) from last_exception
         raise APINetworkError(
-            f"Request failed after {self.max_retries} attempts: {last_exception!s}"
+            f"Request failed after {max_attempts} attempts: {last_exception!s}"
         ) from last_exception
 
     async def _make_request(

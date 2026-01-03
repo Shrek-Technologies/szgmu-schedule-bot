@@ -11,13 +11,3 @@ class EducationLevel(StrEnum):
     SPECIALIST = "specialist"
     MASTER = "master"
     RESIDENCY = "residency"
-
-
-class WeekDayShort(StrEnum):
-    MON = "пн"
-    TUE = "вт"
-    WED = "ср"
-    THU = "чт"
-    FRI = "пт"
-    SAT = "сб"
-    SUN = "вс"

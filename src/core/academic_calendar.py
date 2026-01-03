@@ -1,5 +1,5 @@
 import datetime
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 
 
 class WeekDay(IntEnum):
@@ -10,6 +10,16 @@ class WeekDay(IntEnum):
     FRIDAY = 4
     SATURDAY = 5
     SUNDAY = 6
+
+
+class WeekDayShort(StrEnum):
+    MON = "пн"
+    TUE = "вт"
+    WED = "ср"
+    THU = "чт"
+    FRI = "пт"
+    SAT = "сб"
+    SUN = "вс"
 
 
 class Semester(IntEnum):
