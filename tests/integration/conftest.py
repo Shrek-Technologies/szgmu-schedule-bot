@@ -123,6 +123,9 @@ async def di_container(
     """
     old_env = {}
     env_vars = {
+        "BOT_TOKEN": "999:TEST_TOKEN",
+        "API_SCHEDULE_URL": "https://api.test/schedule",
+        "REDIS_PASSWORD": "testpassword",
         "DB_HOST": postgres_container.get_container_host_ip(),
         "DB_PORT": str(postgres_container.get_exposed_port(5432)),
         "DB_USER": postgres_container.username,
